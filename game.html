@@ -11,16 +11,16 @@
 
   .box {
     background-color:#eee;
-    border : 1px solid #ddd;
+    /*border : 1px solid #ddd;*/
     width:20px;
     height: 20px;
-    top:17px;
+    top:20px;
     position: absolute;
   }
 
   .path {
     width: 100%;
-    height: 40px;
+    height: 39px;
     border-bottom: 1px solid #bbb;
   }
 
@@ -68,11 +68,15 @@ function randomizer(max) {
   return Math.floor(Math.random() * max);
 }
 
+function multipleOf10 (number) {
+	return Math.floor(number/10) * 10;
+}
+
 var Shooter = function (containerSelector,target) {
 
-  this.x = randomizer(1200);
-  this.y = window.innerHeight;
-  this.speed = 40;
+  this.x = multipleOf10(randomizer(1200));
+  this.y = multipleOf10(window.innerHeight);
+  this.speed = 80;
   this.target = target;
 
   this.element = document.createElement("div");
@@ -93,19 +97,24 @@ var Shooter = function (containerSelector,target) {
   }
 
   this.moveUp = function() {
-    this.element.style.top = (this.y -= 8) + "px";
+    this.element.style.top = (this.y -= 10) + "px";
 
-    if (this.y < 40)
+    if (this.y <= 40) {
       clearInterval(this.timer);
+      if (this.x != boxPosition)
+      	crashedScreen();
+    }
   } 
   
   this.fireIt();
   
 }
 
+
 var gameTimer = setInterval(function() {
   new Shooter("body");  
-},2000);
+},3000);
+
 
 function crashedScreen() {
   document.body.className = "crashed";
