@@ -72,12 +72,11 @@ function multipleOf10 (number) {
 	return Math.floor(number/10) * 10;
 }
 
-var Shooter = function (containerSelector,target) {
+var Shooter = function (containerSelector,gameObj) {
 
   this.x = multipleOf10(randomizer(1200));
   this.y = multipleOf10(window.innerHeight);
   this.speed = 80;
-  this.target = target;
 
   this.element = document.createElement("div");
   this.element.className = "shoot";
@@ -101,8 +100,7 @@ var Shooter = function (containerSelector,target) {
 
     if (this.y <= 40) {
       clearInterval(this.timer);
-      if (this.x != boxPosition)
-      	crashedScreen();
+      gameObj.checkEnd(this);
     }
   } 
   
@@ -110,41 +108,59 @@ var Shooter = function (containerSelector,target) {
   
 }
 
-
-var gameTimer = setInterval(function() {
-  new Shooter("body");  
-},3000);
-
-
-function crashedScreen() {
-  document.body.className = "crashed";
-}
-
-var box = function () {
-  this.x = 10;
-  this.moveLeft = function () {
-  }
-  this.moveRight = function () {
-  }
-}
-
-
-var boxPosition = 10;
-
-var xShootPosition = 300;
-var yShootPosition = window.innerHeight;
+var Box = function () {
   
-document.querySelector(".box").style.left   = boxPosition + "px";
-
-document.body.addEventListener("keydown", function(event) {
-
-  if(event.keyCode === 39 ) {
-    document.querySelector(".box").style.left = (boxPosition = boxPosition + 10) + "px"; 
-  } else  if(event.keyCode === 37) {
-    document.querySelector(".box").style.left = (boxPosition = boxPosition - 10) + "px";
+  this.x = 10;
+  this.element = document.querySelector(".box");
+  this.element.style.left   = this.x + "px";
+  
+  this.moveLeft = function () {
+  	this.element.style.left = (this.x -= 10) + "px";
   }
+  
+  this.moveRight = function () {
+  	this.element.style.left = (this.x += 10) + "px"; 
+  }
+}
 
-});
+
+var Game = function () {
+
+	var gameObj = this;
+
+	this.box = new Box();
+
+	this.gameTimer = setInterval(function() {
+	  new Shooter("body",gameObj);  
+	},3000);
+
+	this.gameOver = function() {
+		clearInterval(this.gameTimer);
+  	document.body.className = "crashed";
+	}
+
+	this.checkEnd = function(shooterElement) {
+		if(shooterElement.x != this.box.x)
+			this.gameOver();
+	}
+
+	this.setKeyboardListener = function() {
+		
+		var that = this;
+
+		document.body.addEventListener("keydown", function(event) {
+		  if(event.keyCode === 39 )
+			  that.box.moveRight(); 
+		  else  if(event.keyCode === 37) 
+		    that.box.moveLeft();
+		});
+	};
+
+	this.setKeyboardListener();
+
+}
+
+var myGame = new Game ();
 
 
 </script>
