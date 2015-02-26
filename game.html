@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+
+	<style>
+
+	body {
+		margin : 0px;
+		padding : 0px;
+	}
+
+	.box {
+		background-color:#eee;
+		border : 1px solid #ddd;
+		width:20px;
+		height: 20px;
+		top:17px;
+		position: absolute;
+	}
+
+	.path {
+		width: 100%;
+		height: 40px;
+		border-bottom: 1px solid #bbb;
+	}
+
+	.shoot{
+
+		width : 20px;
+		height : 20px;
+		background-color:red;
+		position:absolute;
+		top: 2000px;
+		left : 400px;
+		border-radius: 3px;
+		opacity: 0.8;	
+	}
+
+	.crashed {
+		background-color:#bb0000;
+	}
+
+	.message {
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		color: white;
+		top: 200px;
+		font-family: 'Arial';
+	}
+
+	</style>
+</head>
+<body>
+
+<div class="message"><h1>Game over</h1></div>
+
+<div class="path">
+
+	<div class="box"></div>
+
+</div>
+
+
+<script>
+
+function randomizer(max) {
+	return Math.floor(Math.random() * max);
+}
+
+var Shooter = function (containerSelector) {
+
+	this.x = randomizer(1200);
+	this.y = window.innerHeight;
+	this.speed = 40;
+
+	this.element = document.createElement("div");
+	this.element.className = "shoot";
+	document.querySelector(containerSelector).appendChild(this.element);	
+
+	this.element.style.left = this.x + "px";
+	this.element.style.top  = this.y + "px";
+
+	this.timer = null;
+
+	this.fireIt = function() {
+		var that = this;
+		this.timer = setInterval(function() {
+			that.moveUp();
+		},this.speed);
+
+	}
+
+	this.moveUp = function() {
+		this.element.style.top = (this.y -= 8) + "px";
+
+		if (this.y < 0)
+			clearInterval(this.timer);
+	}
+
+	this.finish
+
+	this.fireIt();
+
+}
+
+var gameTimer = setInterval(function() {
+	new Shooter("body");	
+},2000);
+
+function crashedScreen() {
+	document.body.className = "crashed";
+}
+
+
+var boxPosition = 10;
+
+var xShootPosition = 300;
+var yShootPosition = window.innerHeight;
+	
+document.querySelector(".box").style.left   = boxPosition + "px";
+
+document.body.addEventListener("keydown", function(event) {
+
+	if(event.keyCode === 39 ) {
+		document.querySelector(".box").style.left = (boxPosition = boxPosition + 10) + "px"; 
+	} else  if(event.keyCode === 37) {
+		document.querySelector(".box").style.left = (boxPosition = boxPosition - 10) + "px";
+	}
+
+});
+
+
+</script>
+
+</body>
+</html>
