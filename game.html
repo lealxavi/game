@@ -70,11 +70,12 @@ function randomizer(max) {
 	return Math.floor(Math.random() * max);
 }
 
-var Shooter = function (containerSelector) {
+var Shooter = function (containerSelector,target) {
 
 	this.x = randomizer(1200);
 	this.y = window.innerHeight;
 	this.speed = 40;
+	this.target = target;
 
 	this.element = document.createElement("div");
 	this.element.className = "shoot";
@@ -96,13 +97,27 @@ var Shooter = function (containerSelector) {
 	this.moveUp = function() {
 		this.element.style.top = (this.y -= 8) + "px";
 
-		if (this.y < 0)
+		if (this.y < 40)
 			clearInterval(this.timer);
 	}
 
-	this.finish
+
 
 	this.fireIt();
+
+}
+
+var box = function () {
+
+	this.x = 10;
+
+	this.moveLeft = function () {
+
+	}
+
+	this.moveRight = function () {
+
+	}
 
 }
 
