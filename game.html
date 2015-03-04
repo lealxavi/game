@@ -80,12 +80,15 @@ var utils = new UtilsClass();
 
 var Shooter = function (containerSelector,gameObj) {
 
-  this.x = utils.multipleOf10(utils.randomizer(1200));
-  this.y = utils.multipleOf10(window.innerHeight);
+  this.ID = gameObj.shootID;
+  this.containerSelector = containerSelector;
+  this.x  = utils.multipleOf10(utils.randomizer(1200));
+  this.y  = utils.multipleOf10(window.innerHeight);
   this.speed = 80;
 
-  this.element = document.createElement("div");
+  this.element           = document.createElement("div");
   this.element.className = "shoot";
+  this.element.id        = "shoot-id-" + this.ID;
   document.querySelector(containerSelector).appendChild(this.element);  
 
   this.element.style.left = this.x + "px";
@@ -99,6 +102,10 @@ var Shooter = function (containerSelector,gameObj) {
       that.moveUp();
     },this.speed);
 
+  }
+
+  this.eraseShoot = function () {
+    document.querySelector(this.containerSelector).removeChild(this.element);
   }
 
   this.moveUp = function() {
@@ -134,10 +141,13 @@ var Game = function () {
 
   var gameObj = this;
 
+  this.shootID = 0;
+  this.shoots = {};
   this.box = new Box();
 
   this.gameTimer = setInterval(function() {
-    new Shooter("body",gameObj);  
+    gameObj.shoots[gameObj.shootID] = new Shooter("body",gameObj);
+    gameObj.shootID++;  
   },3000);
 
   this.gameOver = function() {
@@ -148,6 +158,8 @@ var Game = function () {
   this.checkEnd = function(shooterElement) {
     if(shooterElement.x != this.box.x)
       this.gameOver();
+    else
+      shooterElement.eraseShoot();
   }
 
   this.setKeyboardListener = function() {
