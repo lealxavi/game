@@ -128,7 +128,8 @@ var Box = function () {
   this.element.style.left   = this.x + "px";
   
   this.moveLeft = function () {
-    this.element.style.left = (this.x -= 10) + "px";
+    if (this.x != 0)
+      this.element.style.left = (this.x -= 10) + "px";
   }
   
   this.moveRight = function () {
