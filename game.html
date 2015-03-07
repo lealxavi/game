@@ -105,6 +105,7 @@ var Shooter = function (containerSelector,gameObj) {
   }
 
   this.eraseShoot = function () {
+    clearInterval(this.timer);
     document.querySelector(this.containerSelector).removeChild(this.element);
   }
 
@@ -148,19 +149,31 @@ var Game = function () {
 
   this.gameTimer = setInterval(function() {
     gameObj.shoots[gameObj.shootID] = new Shooter("body",gameObj);
-    gameObj.shootID++;  
+    gameObj.shootID++;
+    console.log(gameObj.shoots);  
   },3000);
 
   this.gameOver = function() {
     clearInterval(this.gameTimer);
     document.body.className = "crashed";
+    this.stopShooting();
+  }
+
+  this.stopShooting = function() {
+    // stop all shoots from array
+    null;
+  }
+
+  this.removeShoot = function(shootElement) {
+    shootElement.eraseShoot();
+    this.shoots[shootElement.ID] = null;
   }
 
   this.checkEnd = function(shooterElement) {
     if(shooterElement.x != this.box.x)
       this.gameOver();
     else
-      shooterElement.eraseShoot();
+      this.removeShoot(shooterElement);
   }
 
   this.setKeyboardListener = function() {
