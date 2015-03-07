@@ -145,10 +145,11 @@ var Game = function () {
   var gameObj = this;
 
   this.__screenWidth = 400;
-  // duplicated value (also in the .box class)
+  // (improvement) duplicated value (also in the .box class)
   this.__boxWidth = 20; 
 
   this.shootID = 0;
+  // (improvement) need to check if we have can remove elements or properties from objets 
   this.shoots = {};
   this.box = new Box(gameObj);
 
@@ -160,7 +161,7 @@ var Game = function () {
   this.gameTimer = setInterval(function() {
     gameObj.shoots[gameObj.shootID] = new Shooter("body",gameObj);
     gameObj.shootID++;
-    console.log(gameObj.shoots);  
+    console.log(gameObj.shoots); // (debug)  
   },3000);
 
   this.gameOver = function() {
@@ -177,6 +178,7 @@ var Game = function () {
   this.removeShoot = function(shootElement) {
     shootElement.eraseShoot();
     this.shoots[shootElement.ID] = null;
+    delete this.shoots[shootElement.ID];
   }
 
   this.checkEnd = function(shooterElement) {
