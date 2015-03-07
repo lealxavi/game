@@ -19,7 +19,6 @@
   }
 
   .path {
-    width: 100%;
     height: 39px;
     border-bottom: 1px solid #bbb;
   }
@@ -82,7 +81,7 @@ var Shooter = function (containerSelector,gameObj) {
 
   this.ID = gameObj.shootID;
   this.containerSelector = containerSelector;
-  this.x  = utils.multipleOf10(utils.randomizer(1200));
+  this.x  = utils.multipleOf10(utils.randomizer(gameObj.__screenWidth - gameObj.__boxWidth));
   this.y  = utils.multipleOf10(window.innerHeight);
   this.speed = 80;
 
@@ -122,9 +121,10 @@ var Shooter = function (containerSelector,gameObj) {
   
 }
 
-var Box = function () {
+var Box = function (gameObj) {
   
   this.x = 10;
+  this.gameObj = gameObj;
   this.element = document.querySelector(".box");
   this.element.style.left   = this.x + "px";
   
@@ -134,7 +134,8 @@ var Box = function () {
   }
   
   this.moveRight = function () {
-    this.element.style.left = (this.x += 10) + "px"; 
+    if (this.x < (gameObj.__screenWidth - gameObj.__boxWidth))
+      this.element.style.left = (this.x += 10) + "px"; 
   }
 }
 
@@ -143,9 +144,18 @@ var Game = function () {
 
   var gameObj = this;
 
+  this.__screenWidth = 400;
+  // duplicated value (also in the .box class)
+  this.__boxWidth = 20; 
+
   this.shootID = 0;
   this.shoots = {};
-  this.box = new Box();
+  this.box = new Box(gameObj);
+
+  this.initialize = function () {
+    document.querySelector(".path").style.width = this.__screenWidth + "px";
+    this.setKeyboardListener();
+  }
 
   this.gameTimer = setInterval(function() {
     gameObj.shoots[gameObj.shootID] = new Shooter("body",gameObj);
@@ -188,7 +198,7 @@ var Game = function () {
     });
   };
 
-  this.setKeyboardListener();
+  this.initialize();
 
 }
 
