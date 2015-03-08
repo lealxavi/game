@@ -11,6 +11,7 @@
 
   .box {
     background-color:#eee;
+    /*background-image : url('http://pbwow.com/forum/images/smilies/icon_lol.gif') ;*/
     /*border : 1px solid #ddd;*/
     width:20px;
     height: 20px;
@@ -28,6 +29,7 @@
     width : 20px;
     height : 20px;
     background-color:red;
+    /*background-image : url('http://www.gifs.net/Animation11/Everything_Else/Love/small_heart.gif');*/
     position:absolute;
     top: 2000px;
     left : 400px;
@@ -128,6 +130,8 @@ var Box = function (gameObj) {
   this.element = document.querySelector(".box");
   this.element.style.left   = this.x + "px";
   
+  this.tmp_movement = 0; // (debug)
+
   this.moveLeft = function () {
     if (this.x != 0)
       this.element.style.left = (this.x -= 10) + "px";
@@ -137,6 +141,30 @@ var Box = function (gameObj) {
     if (this.x < (gameObj.__screenWidth - gameObj.__boxWidth))
       this.element.style.left = (this.x += 10) + "px"; 
   }
+}
+
+var AI = function (gameObj,box) {
+
+  var AIobj = this;
+
+  this.timer = setInterval(function(){
+    AIobj.calculateMovement();
+  },1);
+
+  this.calculateMovement = function () {
+    // (improvement) target it's the same until it dies
+    var targetID = Object.keys(gameObj.shoots)[0] || null;
+    
+    if(targetID == null) return false;
+    
+    var target   = gameObj.shoots[targetID]; 
+    var targetX  = target.x;
+    if (box.x < targetX)
+      box.moveRight();
+    else if (box.x > targetX)
+      box.moveLeft();
+  }
+
 }
 
 
@@ -153,26 +181,42 @@ var Game = function () {
   this.shoots = {};
   this.box = new Box(gameObj);
 
+  this.AI = new AI(this,this.box);
+
+  this.gameTimer = null;
+
   this.initialize = function () {
     document.querySelector(".path").style.width = this.__screenWidth + "px";
     this.setKeyboardListener();
+    this.startShooting();
   }
 
-  this.gameTimer = setInterval(function() {
+  this.newShoot = function () {
     gameObj.shoots[gameObj.shootID] = new Shooter("body",gameObj);
     gameObj.shootID++;
-    console.log(gameObj.shoots); // (debug)  
-  },3000);
+    console.log(gameObj.shoots); // (debug)
+  }
+
+  this.startShooting = function () {
+    this.gameTimer = setInterval(this.newShoot,200);    
+  }
+
+  this.stopShooting = function () {
+    clearInterval(this.gameTimer);
+    this.gameTimer = null;
+  }
+
+  this.tooglePause = function () {
+    if (this.gameTimer == null)
+      this.startShooting();
+    else
+      this.stopShooting();
+  }
 
   this.gameOver = function() {
     clearInterval(this.gameTimer);
     document.body.className = "crashed";
     this.stopShooting();
-  }
-
-  this.stopShooting = function() {
-    // stop all shoots from array
-    null;
   }
 
   this.removeShoot = function(shootElement) {
@@ -195,8 +239,10 @@ var Game = function () {
     document.body.addEventListener("keydown", function(event) {
       if(event.keyCode === 39 )
         that.box.moveRight(); 
-      else  if(event.keyCode === 37) 
+      else if(event.keyCode === 37) 
         that.box.moveLeft();
+      else if (event.keyCode === 80)
+        that.tooglePause();
     });
   };
 
