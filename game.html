@@ -149,7 +149,7 @@ var AI = function (gameObj,box) {
 
   this.timer = setInterval(function(){
     AIobj.calculateMovement();
-  },1);
+  },35);
 
   this.calculateMovement = function () {
     // (improvement) target it's the same until it dies
@@ -198,7 +198,7 @@ var Game = function () {
   }
 
   this.startShooting = function () {
-    this.gameTimer = setInterval(this.newShoot,200);    
+    this.gameTimer = setInterval(this.newShoot,1500);    
   }
 
   this.stopShooting = function () {
